@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>FlaskGPT - Assistant IA</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fichier CSS personnel -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='dist/css/style.css') }}">
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <main class="max-w-4xl mx-auto p-5">
+
+        <!-- En-tête -->
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-indigo-600">
+                FlaskGPT
+            </h1>
+
+            <p class="text-gray-500 mt-2">
+                Votre assistant intelligent
+            </p>
+        </header>
+
+        <!-- Choix du domaine -->
+        <section class="bg-white p-4 rounded-xl shadow mb-4">
+
+            <label for="domain" class="block font-semibold mb-2">
+                Choisir un domaine
+            </label>
+
+            <select id="domain"
+                    class="w-full border rounded-lg p-3">
+
+                <option value="general">Général</option>
+                <option value="informatique">Informatique</option>
+                <option value="finance">Finance</option>
+                <option value="data">Analyse de données</option>
+                <option value="ia">Intelligence artificielle</option>
+
+            </select>
+
+        </section>
+
+        <!-- Bouton nouvelle conversation -->
+        <div class="flex flex-wrap gap-2 mb-4">
+
+            <button id="new-chat"
+                    type="button"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+                Nouvelle conversation
+            </button>
+
+            <button id="stats-button"
+                    type="button"
+                    class="bg-gray-700 text-white px-4 py-2 rounded-lg">
+                Statistiques
+            </button>
+
+
+        </div>
+
+        <!-- Zone d'affichage des messages -->
+        <section id="gpt-output"
+                 class="bg-white rounded-xl shadow p-4 min-h-64 mb-4"
+                 aria-live="polite">
+
+            <p class="text-gray-400">
+                Commencez une conversation avec FlaskGPT.
+            </p>
+
+        </section>
+
+        <!-- Formulaire d'envoi -->
+        <form id="prompt-form"
+              class="flex gap-2 mb-4">
+
+            <input id="prompt"
+                   name="prompt"
+                   type="text"
+                   placeholder="Écrivez votre question..."
+                   required
+                   autocomplete="off"
+                   class="flex-1 min-w-0 border rounded-lg p-3">
+
+            <button type="submit"
+                    class="bg-indigo-600 text-white px-5 py-3 rounded-lg">
+                Envoyer
+            </button>
+
+        </form>
+
+        <!-- Exportation -->
+        <section class="bg-white p-4 rounded-xl shadow mb-4">
+
+            <h2 class="font-bold mb-3">
+                Exporter la conversation
+            </h2>
+
+            <div class="flex flex-wrap gap-2">
+
+                <select id="export-format"
+                        class="border rounded-lg p-2">
+
+                    <option value="txt">Format TXT</option>
+                    <option value="json">Format JSON</option>
+                    <option value="pdf">Format PDF</option>
+
+                </select>
+
+                <button id="export-button"
+                        type="button"
+                        class="bg-green-600 text-white px-4 py-2 rounded-lg">
+                    Télécharger
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- Affichage des statistiques -->
+        <section class="bg-white p-4 rounded-xl shadow">
+
+            <h2 class="font-bold mb-2">
+                Performances de l'assistant
+            </h2>
+
+            <p id="stats-output" class="text-sm text-gray-600">
+                Les statistiques apparaîtront ici.
+            </p>
+
+        </section>
+
+    </main>
+    <script src="{{ url_for('static', filename='dist/JS/script.js') }}"></script>
+
+</body>
+</html>

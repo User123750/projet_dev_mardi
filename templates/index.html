@@ -1,146 +1,97 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>FlaskGPT - Assistant IA</title>
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Fichier CSS personnel -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='dist/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/style.css') }}">
 </head>
-
 <body class="bg-gray-100 text-gray-800">
+<main class="max-w-4xl mx-auto p-5">
 
-    <main class="max-w-4xl mx-auto p-5">
+    <header class="mb-6">
+        <h1 class="text-3xl font-bold text-indigo-600">FlaskGPT</h1>
+        <p class="text-gray-500 mt-1">Votre assistant intelligent</p>
+    </header>
 
-        <!-- En-tête -->
-        <header class="mb-6">
-            <h1 class="text-3xl font-bold text-indigo-600">
-                FlaskGPT
-            </h1>
-
-            <p class="text-gray-500 mt-2">
-                Votre assistant intelligent
-            </p>
-        </header>
-
-        <!-- Choix du domaine -->
-        <section class="bg-white p-4 rounded-xl shadow mb-4">
-
-            <label for="domain" class="block font-semibold mb-2">
-                Choisir un domaine
-            </label>
-
-            <select id="domain"
-                    class="w-full border rounded-lg p-3">
-
+    <section class="bg-white p-4 rounded-xl shadow mb-4 grid gap-3 sm:grid-cols-2">
+        <div>
+            <label for="domain" class="block font-semibold mb-1">Domaine</label>
+            <select id="domain" class="w-full border rounded-lg p-2">
                 <option value="general">Général</option>
                 <option value="informatique">Informatique</option>
                 <option value="finance">Finance</option>
                 <option value="data">Analyse de données</option>
                 <option value="ia">Intelligence artificielle</option>
-
+                <option value="droit">Droit</option>
             </select>
-
-        </section>
-
-        <!-- Bouton nouvelle conversation -->
-        <div class="flex flex-wrap gap-2 mb-4">
-
-            <button id="new-chat"
-                    type="button"
-                    class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
-                Nouvelle conversation
-            </button>
-
-            <button id="stats-button"
-                    type="button"
-                    class="bg-gray-700 text-white px-4 py-2 rounded-lg">
-                Statistiques
-            </button>
-
-
         </div>
+        <div>
+            <label for="history" class="block font-semibold mb-1">Historique</label>
+            <select id="history" class="w-full border rounded-lg p-2">
+                <option value="">Conversations précédentes…</option>
+            </select>
+        </div>
+    </section>
 
-        <!-- Zone d'affichage des messages -->
-        <section id="gpt-output"
-                 class="bg-white rounded-xl shadow p-4 min-h-64 mb-4"
-                 aria-live="polite">
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button id="new-chat" type="button" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Nouvelle conversation</button>
+        <button id="delete-chat" type="button" class="bg-red-600 text-white px-4 py-2 rounded-lg">Effacer et recommencer</button>
+    </div>
 
-            <p class="text-gray-400">
-                Commencez une conversation avec FlaskGPT.
-            </p>
+    <section id="gpt-output" class="bg-white rounded-xl shadow p-4 min-h-64 mb-4" aria-live="polite"></section>
 
-        </section>
+    <form id="prompt-form" class="flex gap-2 mb-4">
+        <input id="prompt" type="text" placeholder="Écrivez votre question..." required autocomplete="off"
+               class="flex-1 min-w-0 border rounded-lg p-3">
+        <button type="submit" class="bg-indigo-600 text-white px-5 py-3 rounded-lg disabled:opacity-50">Envoyer</button>
+    </form>
 
-        <!-- Formulaire d'envoi -->
-        <form id="prompt-form"
-              class="flex gap-2 mb-4">
+    <p id="error-box" class="hidden bg-red-100 border border-red-400 text-red-700 rounded-lg p-3 mb-4"></p>
 
-            <input id="prompt"
-                   name="prompt"
-                   type="text"
-                   placeholder="Écrivez votre question..."
-                   required
-                   autocomplete="off"
-                   class="flex-1 min-w-0 border rounded-lg p-3">
+    <section class="bg-white p-4 rounded-xl shadow mb-4">
+        <h2 class="font-bold mb-2">Sources et références</h2>
+        <input id="doc-file" type="file" accept=".pdf,.txt,.md" class="text-sm mb-2">
+        <div id="doc-list" class="text-sm mb-3"></div>
+        <div class="flex flex-wrap gap-4 text-sm">
+            <label>Extraits par source
+                <select id="top-k" class="border rounded p-1 ml-1">
+                    <option>1</option><option selected>3</option><option>5</option>
+                </select></label>
+            <label>Lignes affichées par extrait
+                <select id="lines" class="border rounded p-1 ml-1">
+                    <option value="2">2</option><option value="4" selected>4</option>
+                    <option value="8">8</option><option value="100">Tout</option>
+                </select></label>
+        </div>
+    </section>
 
-            <button type="submit"
-                    class="bg-indigo-600 text-white px-5 py-3 rounded-lg">
-                Envoyer
-            </button>
+    <section class="bg-white p-4 rounded-xl shadow mb-4">
+        <h2 class="font-bold mb-2">Exporter la conversation</h2>
+        <div class="flex flex-wrap gap-2">
+            <select id="export-format" class="border rounded-lg p-2">
+                <option value="txt">TXT</option><option value="json">JSON</option><option value="pdf">PDF</option>
+            </select>
+            <button id="export-button" type="button" class="bg-green-600 text-white px-4 py-2 rounded-lg">Télécharger</button>
+            <button id="summary-button" type="button" class="bg-green-800 text-white px-4 py-2 rounded-lg">Résumé PDF</button>
+        </div>
+    </section>
 
-        </form>
+    <section class="bg-white p-4 rounded-xl shadow mb-4">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="font-bold">Performances de l'assistant</h2>
+            <button id="stats-button" type="button" class="bg-gray-700 text-white px-3 py-1 rounded-lg text-sm">Actualiser</button>
+        </div>
+        <div id="stats-output" class="text-sm text-gray-600">Aucune statistique pour le moment.</div>
+    </section>
 
-        <!-- Exportation -->
-        <section class="bg-white p-4 rounded-xl shadow mb-4">
-
-            <h2 class="font-bold mb-3">
-                Exporter la conversation
-            </h2>
-
-            <div class="flex flex-wrap gap-2">
-
-                <select id="export-format"
-                        class="border rounded-lg p-2">
-
-                    <option value="txt">Format TXT</option>
-                    <option value="json">Format JSON</option>
-                    <option value="pdf">Format PDF</option>
-
-                </select>
-
-                <button id="export-button"
-                        type="button"
-                        class="bg-green-600 text-white px-4 py-2 rounded-lg">
-                    Télécharger
-                </button>
-
-            </div>
-
-        </section>
-
-        <!-- Affichage des statistiques -->
-        <section class="bg-white p-4 rounded-xl shadow">
-
-            <h2 class="font-bold mb-2">
-                Performances de l'assistant
-            </h2>
-
-            <p id="stats-output" class="text-sm text-gray-600">
-                Les statistiques apparaîtront ici.
-            </p>
-
-        </section>
-
-    </main>
-    <script src="{{ url_for('static', filename='dist/JS/script.js') }}"></script>
-
+    <section class="bg-white p-4 rounded-xl shadow">
+        <h2 class="font-bold mb-2">Qualité et gouvernance des données</h2>
+        <input id="data-file" type="file" accept=".csv,.xlsx,.xls" class="text-sm">
+        <div id="data-output" class="text-sm mt-3"></div>
+    </section>
+</main>
+<script src="{{ url_for('static', filename='dist/JS/script.js') }}"></script>
 </body>
 </html>
